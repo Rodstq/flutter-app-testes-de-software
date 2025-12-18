@@ -94,4 +94,12 @@ class AddContaViewModel extends ChangeNotifier{
     }
   }
 
+  void reset() {
+    _origem = "";
+    _data = null;
+    _dono = 0;
+
+    notifyListeners();
+  }
+
 }

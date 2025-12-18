@@ -343,10 +343,22 @@ class _AddContaState extends State<AddConta> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () async {
+
+                    final valorConvertido = double.tryParse(_valorController.text);
+
+                    if(_valorController.text.trim().isEmpty){
+                      _showSnackBarErro(context, 'Valor não pode ser vazio');
+                      return;
+                    } else if (valorConvertido == null || valorConvertido <= 0.01) {
+                      _showSnackBarErro(context, 'Insira um valor numérico válido e maior que 0.00');
+                      return;
+                    }
+
                    await addcontaViewModel.onAdicionarConta(origem: addcontaViewModel.origem, data: addcontaViewModel.data, descricao: _descController.text, dono: addcontaViewModel.dono, valor: double.tryParse(_valorController.text),
                    token : loginViewModel.user!.token);
 
-                   Navigator.pop(context);
+                   Navigator.pushReplacementNamed(context, '/dashboard');
+                   
                   },
                   child: Text('Adicionar'),
                 ),
@@ -372,4 +384,21 @@ class _AddContaState extends State<AddConta> {
     }
   }
 
+
+    _showSnackBarErro(BuildContext context, String menssagem){
+    final snackBar = SnackBar(
+    content: Row(
+      children: [
+        Icon(Icons.error_outline, color: Colors.white), // Ícone ajuda na leitura
+        SizedBox(width: 10),
+        Expanded(child: Text(menssagem)),
+      ],
+    ),
+    backgroundColor: Colors.redAccent, // Cor de erro
+    behavior: SnackBarBehavior.floating, // Fica flutuando (mais moderno)
+    duration: Duration(seconds: 4), // Tempo para ler
+  );
+
+  ScaffoldMessenger.of(context).showSnackBar(snackBar);
+  }
 }

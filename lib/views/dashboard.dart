@@ -1,5 +1,6 @@
 import 'package:contasflutter/data/model/conta_model.dart';
 import 'package:contasflutter/viewmodel/Login_view_model.dart';
+import 'package:contasflutter/viewmodel/add_conta_view_model.dart';
 import 'package:contasflutter/viewmodel/dashboard_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -19,8 +20,19 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
   @override
   void initState() {
     super.initState();
-    // Inicializamos com um controller "vazio" para evitar erros no primeiro frame.
     _tabController = TabController(length: 0, vsync: this);
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+    final loginVM = Provider.of<LoginViewModel>(context, listen: false);
+    final dashboardVM = Provider.of<DashboardViewModel>(context, listen: false);
+
+    if (loginVM.user != null) {
+      dashboardVM.init(loginVM.user!.id!, loginVM.user!.token).then((_) {
+        // Após carregar as contas, atualiza o saldo no LoginViewModel
+        loginVM.setSaldo(dashboardVM.total);
+      });
+    }
+  });
   }
 
   @override
@@ -34,6 +46,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
   Widget build(BuildContext context) {
     DashboardViewModel dashboardViewModel = context.watch<DashboardViewModel>();
     LoginViewModel loginViewModel = context.watch<LoginViewModel>();
+    AddContaViewModel addcontaViewModel = context.watch<AddContaViewModel>();
 
     if (_tabController.length != dashboardViewModel.origens.length) {
       // Descartamos o controller antigo para não vazar memória.
@@ -85,6 +98,9 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
               leading: const Icon(Icons.post_add_sharp),
               title: const Text('Adicionar conta'),
               onTap: () {
+
+                
+                addcontaViewModel.reset();
                 Navigator.popAndPushNamed(context, '/add_conta');
               },
             ),
@@ -112,6 +128,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                           ),
                           Text(
                             '${loginViewModel.saldoTemporario}',
+                            key: const Key('valor_saldo_total'),
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 14,
