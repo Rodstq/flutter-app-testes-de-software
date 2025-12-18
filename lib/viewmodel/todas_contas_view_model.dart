@@ -13,7 +13,7 @@ class TodasContasViewModel extends ChangeNotifier {
 
   Set<String> get origens => _origens;
 
-  bool _isLoading = true;
+  bool _isLoading = false;
 
   bool get isLoading => _isLoading;
 
@@ -31,7 +31,7 @@ class TodasContasViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Conta>> fetchContas() async {
+  Future<List<Conta>> fetchContas(String token) async {
 
       _isLoading = true;
       notifyListeners();
@@ -43,7 +43,7 @@ class TodasContasViewModel extends ChangeNotifier {
         Uri.parse('http://10.0.2.2:8000/api/all-my-contas'),
         headers: {
           'Authorization':
-              'Bearer 1|oLZbB94rVXdXSYQT9f2cgAxpGhhvQhiLOvO2xdcSeb8e06ca',
+              'Bearer $token',
           'Accept': 'application/json',
         },
       );
@@ -140,8 +140,8 @@ class TodasContasViewModel extends ChangeNotifier {
   
 
 
-  Future<void> init() async{
-    _contasFuture = await fetchContas ();
+  Future<void> init(String? token) async{
+    _contasFuture = await fetchContas (token!);
     notifyListeners();
   }
 }

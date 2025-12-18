@@ -39,7 +39,8 @@ class AddContaViewModel extends ChangeNotifier{
     int? dono,
     DateTime? data,
     String? descricao,
-    double? valor,}
+    double? valor,
+    String? token}
   ) async {
     _conta = Conta(origem: '', dono: 0, donoName: '', data: '', descricao: '', valor: 0);
 
@@ -56,7 +57,7 @@ class AddContaViewModel extends ChangeNotifier{
 
     if(valor != null){_conta!.valor = valor;};
 
-   await enviarConta(_conta);
+   await enviarConta(_conta,token!);
   }
 
    void setData(DateTime? data) {
@@ -65,7 +66,7 @@ class AddContaViewModel extends ChangeNotifier{
   }
 
 
-  Future<void> enviarConta(Conta? conta) async {
+  Future<void> enviarConta(Conta? conta, String token) async {
     String url = 'http://10.0.2.2:8000/api/add-conta';
 
     try {
@@ -73,7 +74,7 @@ class AddContaViewModel extends ChangeNotifier{
         Uri.parse(url),
         headers: {
           'Authorization':
-              'Bearer 1|oLZbB94rVXdXSYQT9f2cgAxpGhhvQhiLOvO2xdcSeb8e06ca',
+              'Bearer $token',
           'Accept': 'application/json',
           'Content-Type': 'application/json; charset=UTF-8',          
         },

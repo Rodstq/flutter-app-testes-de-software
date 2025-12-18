@@ -1,3 +1,4 @@
+import 'package:contasflutter/viewmodel/Login_view_model.dart';
 import 'package:contasflutter/viewmodel/add_conta_view_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -28,6 +29,8 @@ class _AddContaState extends State<AddConta> {
   Widget build(BuildContext context) {
 
     AddContaViewModel addcontaViewModel = context.watch<AddContaViewModel>();
+    
+    LoginViewModel loginViewModel = context.watch<LoginViewModel>();
 
     double screenWidth = MediaQuery.of(context).size.width;
     return Scaffold(
@@ -340,7 +343,8 @@ class _AddContaState extends State<AddConta> {
                 height: 50,
                 child: ElevatedButton(
                   onPressed: () async {
-                   await addcontaViewModel.onAdicionarConta(origem: addcontaViewModel.origem, data: addcontaViewModel.data, descricao: _descController.text, dono: addcontaViewModel.dono, valor: double.tryParse(_valorController.text));
+                   await addcontaViewModel.onAdicionarConta(origem: addcontaViewModel.origem, data: addcontaViewModel.data, descricao: _descController.text, dono: addcontaViewModel.dono, valor: double.tryParse(_valorController.text),
+                   token : loginViewModel.user!.token);
 
                    Navigator.pop(context);
                   },

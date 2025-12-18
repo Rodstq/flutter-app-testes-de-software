@@ -46,10 +46,11 @@ class _TodasContasState extends State<TodasContas> with TickerProviderStateMixin
 
     return Scaffold(
       appBar: AppBar(
+        title: Text('Olá! ${loginViewModel.user?.name}'),
         actions: [
           IconButton(
             onPressed: () async {
-              await todasContasViewModel.init();
+              await todasContasViewModel.init(loginViewModel.user!.token);
 
               loginViewModel.setSaldo(todasContasViewModel.total);
             },
@@ -73,9 +74,9 @@ class _TodasContasState extends State<TodasContas> with TickerProviderStateMixin
 
             ListTile(
               leading: const Icon(Icons.home),
-              title: const Text('Todas as Contas'),
+              title: const Text('Meu Dashboard'),
               onTap: () {
-                Navigator.popAndPushNamed(context, '/todas_contas');
+                Navigator.popAndPushNamed(context, '/dashboard');
               },
             ),
 
@@ -233,15 +234,15 @@ class _TodasContasState extends State<TodasContas> with TickerProviderStateMixin
                     )
                   else
                   // Mostra um placeholder enquanto as abas carregam
+                  Text('todas as contas'),
                   Container(height: 48),
-
                   Expanded(
                     child: todasContasViewModel.origens.isEmpty
                         ? Center(
                             child: todasContasViewModel.isLoading
                                 ? CircularProgressIndicator()
                                 : Text(
-                                    'Nenhuma conta encontrada.\nClique no ícone para recarregar.',
+                                    'Nenhuma cota encontrada.\nClique no ícone para recarregar.',
                                     textAlign: TextAlign.center,
                                   ),
                           )

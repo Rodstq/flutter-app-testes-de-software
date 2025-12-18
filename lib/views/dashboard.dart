@@ -50,13 +50,46 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
         actions: [
           IconButton(
             onPressed: () async {
-              await dashboardViewModel.init();
+              await dashboardViewModel.init(loginViewModel.user!.id!,loginViewModel.user!.token);
 
               loginViewModel.setSaldo(dashboardViewModel.total);
             },
             icon: Icon(Icons.replay_outlined),
           ),
         ],
+      ),
+
+
+      drawer: Drawer(
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            DrawerHeader(
+              padding: EdgeInsets.only(left: 10),
+              decoration: BoxDecoration(color: Colors.purple[900]),
+              child: Text(
+                'Contas',
+                style: TextStyle(color: Colors.white, fontSize: 24),
+              ),
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.home),
+              title: const Text('Todas as Contas'),
+              onTap: () {
+                Navigator.popAndPushNamed(context, '/todas_contas');
+              },
+            ),
+
+            ListTile(
+              leading: const Icon(Icons.post_add_sharp),
+              title: const Text('Adicionar conta'),
+              onTap: () {
+                Navigator.popAndPushNamed(context, '/add_conta');
+              },
+            ),
+          ],
+        ),
       ),
 
       body: Column(

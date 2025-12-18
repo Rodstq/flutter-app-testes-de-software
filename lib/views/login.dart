@@ -70,7 +70,7 @@ class _LoginPageState extends State<LoginPage> {
                         
                         await loginViewModel.login(_emailController.text, _passwordController.text);
                                               
-                        Navigator.pushReplacementNamed(context, '/todas_contas');
+                        Navigator.pushReplacementNamed(context, '/dashboard');
         
                       } on Exception catch (e){
                        _showSnackBarErro(context, loginViewModel.message);

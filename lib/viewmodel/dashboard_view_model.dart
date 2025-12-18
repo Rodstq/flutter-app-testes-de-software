@@ -31,7 +31,7 @@ class DashboardViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<List<Conta>> fetchContas() async {
+  Future<List<Conta>> fetchContas(String? token) async {
 
       _isLoading = true;
       notifyListeners();
@@ -43,7 +43,7 @@ class DashboardViewModel extends ChangeNotifier {
         Uri.parse('http://10.0.2.2:8000/api/all-contas'),
         headers: {
           'Authorization':
-              'Bearer 1|oLZbB94rVXdXSYQT9f2cgAxpGhhvQhiLOvO2xdcSeb8e06ca',
+              'Bearer $token',
           'Accept': 'application/json',
         },
       );
@@ -90,15 +90,15 @@ class DashboardViewModel extends ChangeNotifier {
   }
   
 
-  Future<List<Conta>> fetchMyContas(int id) async {
+  Future<List<Conta>> fetchMyContas(int id, String token) async {
       final List<Conta> allContas = [];
       total=0;
 
-      final response = await http.get(
+      final response = await http.post(
         Uri.parse('http://10.0.2.2:8000/api/all-my-contas'),
         headers: {
           'Authorization':
-              'Bearer 1|oLZbB94rVXdXSYQT9f2cgAxpGhhvQhiLOvO2xdcSeb8e06ca',
+              'Bearer $token',
           'Accept': 'application/json',
         },
       );
@@ -141,8 +141,8 @@ class DashboardViewModel extends ChangeNotifier {
   
 
 
-  Future<void> init() async{
-    _contasFuture = await fetchContas ();
+  Future<void> init(int id, String? token) async{
+    _contasFuture = await fetchMyContas (id, token!);
     notifyListeners();
   }
 }

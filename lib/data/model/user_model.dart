@@ -7,12 +7,14 @@ class UserModel {
     String? email;
     double? saldo;
     double? salario;
+    String? token;
   UserModel({
     this.id,
     this.name,
     this.email,
     this.saldo,
-    this.salario
+    this.salario,
+    this.token
   });
     
 
@@ -23,13 +25,15 @@ class UserModel {
     String? password,
     double? saldo,
     double? salario,
+    String? token,
   }) {
     return UserModel(
       id: id ?? this.id,
       name: name ?? this.name,
       email: email ?? this.email,
       saldo: saldo ?? this.saldo,
-      salario: salario ?? this.salario
+      salario: salario ?? this.salario,
+      token: token ?? this.token
     );
   }
 
@@ -49,7 +53,8 @@ class UserModel {
       name: map['name'] != null ? map['name'] as String : null,
       email: map['email'] != null ? map['email'] as String : null,
       saldo: map['saldo'] != null ? double.tryParse(map['saldo']) : null,
-      salario: map['salario'] != null ? double.tryParse(map['salario']) : null
+      salario: map['salario'] != null ? double.tryParse(map['salario']) : null,
+      token : map['token']
     );
   }
 

@@ -35,7 +35,7 @@ class LoginViewModel  extends ChangeNotifier{
           'password': password,
         }),
       ).timeout(
-          const Duration(seconds: 10),
+          const Duration(seconds: 50),
         );
 
       final responseData = jsonDecode(response.body);
@@ -45,6 +45,10 @@ class LoginViewModel  extends ChangeNotifier{
         final token = responseData['access_token'];
 
         final Map<String, dynamic> userMap = responseData['user'];
+
+        if(token != null) {
+          userMap['token'] = token;
+        }
 
         final UserModel loggedInUser = UserModel.fromMap(userMap);
 
@@ -59,14 +63,21 @@ class LoginViewModel  extends ChangeNotifier{
         notifyListeners();
 
         message = responseData['message'] ?? 'Credenciais inválidas.';
-        throw Exception('Credenciais inválidas.');
+        throw Exception(message);
+      } else if (response.statusCode == 500) {
+
+        isLoading = false;
+        notifyListeners();
+
+        message = responseData['message'];
+        throw Exception(message);
       } else {
         
       isLoading = false;
       notifyListeners();
 
        message = 'Erro ao fazer login: ${response.statusCode}';
-       throw Exception('Erro ao fazer login');
+       throw Exception('Erro geral ao fazer login');
       }
 
       
@@ -80,7 +91,6 @@ class LoginViewModel  extends ChangeNotifier{
     } catch (e) {
       isLoading = false;
       notifyListeners();
-      message = 'Falha geral de conexão:';
       rethrow;
     }
   }
