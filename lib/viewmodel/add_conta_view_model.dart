@@ -7,6 +7,12 @@ import 'package:intl/intl.dart';
 
 class AddContaViewModel extends ChangeNotifier{
 
+  // Adicione um campo para o cliente
+  final http.Client httpClient;
+
+  // No construtor, peça o cliente. Se não passarem nada, usa o real.
+  AddContaViewModel({http.Client? client}) : httpClient = client ?? http.Client();
+
   String _origem = 'Nubank';
   int _dono = 1;
 
@@ -70,7 +76,7 @@ class AddContaViewModel extends ChangeNotifier{
     String url = 'http://10.0.2.2:8000/api/add-conta';
 
     try {
-      final response = await http.post(
+      final response = await httpClient.post(
         Uri.parse(url),
         headers: {
           'Authorization':
@@ -91,14 +97,44 @@ class AddContaViewModel extends ChangeNotifier{
       }
     } catch (e) {
       print('Erro de conexão: $e');
+      rethrow;
+    }
+  }
+
+
+   Future<void> deletarConta(Conta? conta, String? token) async {
+    String url = 'http://10.0.2.2:8000/api/delete-conta';
+
+    try {
+      final response = await httpClient.post(
+        Uri.parse(url),
+        headers: {
+          'Authorization':
+              'Bearer $token',
+          'Accept': 'application/json',
+          'Content-Type': 'application/json; charset=UTF-8',          
+        },
+        body: jsonEncode({
+          'conta_id': conta!.id,
+          'valor' : conta!.valor
+        }),
+      );
+
+      if (response.statusCode == 201) {
+        print('Conta deletada com sucesso!');
+        final responseData = jsonDecode(response.body);
+        print('Mensagem do servidor: ${responseData['message']}');
+      } else {
+        print('Erro ao deletar a conta. Status: ${response.statusCode}');
+        print('Corpo da resposta: ${response.body}');
+      }
+    } catch (e) {
+      print('Erro de conexão: $e');
     }
   }
 
   void reset() {
-    _origem = "";
     _data = null;
-    _dono = 0;
-
     notifyListeners();
   }
 

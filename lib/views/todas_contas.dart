@@ -51,8 +51,6 @@ class _TodasContasState extends State<TodasContas> with TickerProviderStateMixin
           IconButton(
             onPressed: () async {
               await todasContasViewModel.init(loginViewModel.user!.token);
-
-              loginViewModel.setSaldo(todasContasViewModel.total);
             },
             icon: Icon(Icons.replay_outlined),
           ),

@@ -14,7 +14,7 @@ class DashboardViewModel extends ChangeNotifier {
 
   Set<String> get origens => _origens;
 
-  bool _isLoading = true;
+  bool _isLoading = false;
   bool get isLoading => _isLoading ;
 
 
@@ -138,8 +138,6 @@ class DashboardViewModel extends ChangeNotifier {
       }
       return allContas;
   }
-  
-
 
   Future<void> init(int id, String? token) async{
     _contasFuture = await fetchMyContas (id, token!);

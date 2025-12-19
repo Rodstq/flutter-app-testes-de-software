@@ -27,10 +27,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
     final dashboardVM = Provider.of<DashboardViewModel>(context, listen: false);
 
     if (loginVM.user != null) {
-      dashboardVM.init(loginVM.user!.id!, loginVM.user!.token).then((_) {
-        // Após carregar as contas, atualiza o saldo no LoginViewModel
-        loginVM.setSaldo(dashboardVM.total);
-      });
+      dashboardVM.init(loginVM.user!.id!, loginVM.user!.token);
     }
   });
   }
@@ -65,7 +62,10 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
             onPressed: () async {
               await dashboardViewModel.init(loginViewModel.user!.id!,loginViewModel.user!.token);
 
-              loginViewModel.setSaldo(dashboardViewModel.total);
+              loginViewModel.fetchSaldo(loginViewModel.user!.token);
+
+              loginViewModel.fetchSaldo(loginViewModel.user!.token);
+
             },
             icon: Icon(Icons.replay_outlined),
           ),
@@ -127,7 +127,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                             style: TextStyle(color: Colors.white),
                           ),
                           Text(
-                            '${loginViewModel.saldoTemporario}',
+                            '${loginViewModel.user!.saldo}',
                             key: const Key('valor_saldo_total'),
                             style: TextStyle(
                               color: Colors.white,
@@ -214,16 +214,6 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                           ],
                         ),
                       ),
-
-                      // ElevatedButton(
-                      //   onPressed: () async {
-
-                      //     await dashboardViewModel.init();
-
-                      //     loginViewModel.setSaldo(dashboardViewModel.total);
-
-                      //   },
-                      //   child: Text('Atualizar contas'))
                     ],
                   ),
                 ),
@@ -285,7 +275,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                                   Container(
                                     height: 40,
                                     margin: EdgeInsets.only(top: 10),
-                                    width: 200,
+                                    width: 400,
                                     alignment: Alignment.center,
                                     decoration: BoxDecoration(
                                       color:  Colors.purple[900],                              
@@ -302,6 +292,7 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
 
                                   Expanded(
                                     child: ListView.builder(
+                                      shrinkWrap: true,
                                       itemCount: contasDaOrigem.length,
                                       itemBuilder: (context, index) {
                                         final conta = contasDaOrigem[index];
@@ -310,10 +301,28 @@ class _DashboardState extends State<Dashboard> with TickerProviderStateMixin{
                                             title: Text(conta.descricao ?? ''),
                                             subtitle: Text(
                                                 '${conta.donoName} - ${conta.data}'),
-                                            trailing: Text(
-                                              'R\$ ${conta.valor?.toStringAsFixed(2) ?? 0.00}',
-                                              style: TextStyle(
-                                                  fontWeight: FontWeight.bold),
+                                            trailing: Row(
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                Text(
+                                                  'R\$ ${conta.valor?.toStringAsFixed(2) ?? 0.00}',
+                                                  key: const Key('valor_conta_excluida'),
+                                                  style: TextStyle(
+                                                      fontWeight: FontWeight.bold),
+                                                ),
+                                                IconButton(
+                                                  onPressed: () async {
+
+                                                   await addcontaViewModel.deletarConta(conta,loginViewModel.user!.token);
+
+                                                   await dashboardViewModel.init(loginViewModel.user!.id!,loginViewModel.user!.token);
+
+                                                   await loginViewModel.fetchSaldo(loginViewModel.user!.token);
+
+                                                  }, 
+                                                  icon: Icon(Icons.delete_forever)
+                                                )
+                                              ],
                                             ),
                                           ),
                                         );

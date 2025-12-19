@@ -349,13 +349,15 @@ class _AddContaState extends State<AddConta> {
                     if(_valorController.text.trim().isEmpty){
                       _showSnackBarErro(context, 'Valor não pode ser vazio');
                       return;
-                    } else if (valorConvertido == null || valorConvertido <= 0.01) {
+                    } else if (valorConvertido == null || valorConvertido < 0.01) {
                       _showSnackBarErro(context, 'Insira um valor numérico válido e maior que 0.00');
                       return;
                     }
 
                    await addcontaViewModel.onAdicionarConta(origem: addcontaViewModel.origem, data: addcontaViewModel.data, descricao: _descController.text, dono: addcontaViewModel.dono, valor: double.tryParse(_valorController.text),
                    token : loginViewModel.user!.token);
+
+                   await loginViewModel.fetchSaldo(loginViewModel.user!.token);
 
                    Navigator.pushReplacementNamed(context, '/dashboard');
                    

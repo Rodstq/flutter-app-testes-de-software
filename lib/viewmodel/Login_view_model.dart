@@ -95,13 +95,35 @@ class LoginViewModel  extends ChangeNotifier{
     }
   }
 
-  void setSaldo(double totalContas) {
-    if (user != null) {
-      // Altera o estado interno do objeto 'user'
-      if (user!.saldo != null){        
-          saldoTemporario = user!.saldo! - totalContas;
-          notifyListeners();
+ Future<void> fetchSaldo(String? token) async {
+  double saldo = 0;
+
+  try {
+    final response = await http.post(
+      Uri.parse('http://10.0.2.2:8000/api/fetch-saldo'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final raw = utf8.decode(response.bodyBytes);
+      
+      final List<dynamic> jsonList = jsonDecode(raw);
+
+      if (jsonList.isNotEmpty) {
+
+        final String saldoStr = jsonList[0]['saldo'];
+        
+        saldo = double.tryParse(saldoStr) ?? 0.0;
+
+        user!.saldo = saldo;
+        notifyListeners();
       }
     }
+  } catch (e) {
+    print('Erro ao buscar saldo: $e');
   }
+}
 }
